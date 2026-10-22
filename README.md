@@ -1,5 +1,14 @@
 # 映像魔镜安卓内测版
 
+**[打开专用下载页](https://hkjtsgmc79-boop.github.io/yingxiang-mirror-downloads/)**　|　**[分享短链接](https://is.gd/yxmojing)**
+
+扫码打开下载页，或保存二维码供现场使用：
+
+<img src="./assets/download-qr.png" alt="映像魔镜下载页二维码" width="180" height="180">
+
+[下载PNG二维码](https://hkjtsgmc79-boop.github.io/yingxiang-mirror-downloads/assets/download-qr.png) · [下载SVG矢量二维码](https://hkjtsgmc79-boop.github.io/yingxiang-mirror-downloads/assets/download-qr.svg)
+
+
 映像魔镜面向横屏安卓魔镜设备，提供传统文化妆造模板浏览、相机拍摄和照片导入等基础体验。本仓库提供安装包下载和安装说明。
 
 **[下载安卓安装包（约72.5 MB）](https://github.com/hkjtsgmc79-boop/yingxiang-mirror-downloads/releases/download/v4.0.0-dev.2-android.1/yingxiang-mirror-4.0.0-dev.2-android.1.apk)**　|　**[查看版本发布页](https://github.com/hkjtsgmc79-boop/yingxiang-mirror-downloads/releases/tag/v4.0.0-dev.2-android.1)**

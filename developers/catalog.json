@@ -1,0 +1,10 @@
+{
+  "api_version": "0.1.0",
+  "execution_mode": "fixture_replay",
+  "description": "公开接入目录。原创矢量图标仅用于目录展示；任务服务返回固定参考结果，不调用模型。",
+  "templates": [
+    {"id":"opera-qingyi","name":"青衣","description":"以水袖与头面轮廓表示青衣扮相，用于目录展示与固定参考任务。","preview_url":"./assets/qingyi.svg"},
+    {"id":"opera-wusheng","name":"武生","description":"以盔帽与靠旗轮廓表示武生扮相，用于目录展示与固定参考任务。","preview_url":"./assets/wusheng.svg"},
+    {"id":"opera-hualian","name":"花脸","description":"以对称线条表示脸谱视觉元素，用于目录展示与固定参考任务。","preview_url":"./assets/hualian.svg"}
+  ]
+}

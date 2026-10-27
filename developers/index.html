@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="映像魔镜开发者接入资料：公开角色目录、接口说明、接入约定与独立客户端。">
+  <title>（示范）映像魔镜开发者中心</title>
+  <link rel="icon" href="./assets/hualian.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳转到内容</a>
+  <header class="site-header wrap">
+    <a class="brand" href="./" aria-label="映像魔镜开发者中心首页"><span class="brand-mark" aria-hidden="true">映</span><span>映像魔镜<small>开发者中心</small></span></a>
+    <nav aria-label="主要导航">
+      <a href="#catalog">公开目录</a>
+      <a href="#api">接口说明</a>
+      <a href="./terms.html">接入约定</a>
+      <a href="https://github.com/hkjtsgmc79-boop/yingxiang-mirror-downloads/tree/main/developers" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+    </nav>
+  </header>
+  <main id="main" class="wrap">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow">DEVELOPER PORTAL <span>v0.1.0</span></p>
+        <h1 id="page-title">（示范）映像魔镜<br>开发者中心</h1>
+        <p class="lead">从一份角色目录开始，接入传统文化体验。</p>
+        <p class="intro">公开目录可直接读取。下载本地接入服务后，可使用独立客户端提交任务、查询状态并取得固定参考结果，验证完整接口流程。</p>
+        <div class="actions"><a class="button primary" href="./quickstart.html">查看快速开始 <span aria-hidden="true">↗</span></a><a class="button secondary" href="./openapi.json">下载接口定义</a></div>
+      </div>
+      <aside class="hero-note" aria-labelledby="scope-title">
+        <div class="status-line"><span class="status-dot" aria-hidden="true"></span>公开文档与接入验证环境</div>
+        <h2 id="scope-title">轻量、可运行、可留档。</h2>
+        <dl><div><dt>公开入口</dt><dd>角色目录、接口文档、客户端源码</dd></div><div><dt>任务运行</dt><dd>本机 HTTP 接口，固定输入与参考输出</dd></div><div><dt>验证记录</dt><dd>请求编号、返回状态、结果与异常</dd></div></dl>
+        <p class="scope-note">固定参考输出用于接入联调；本环境不调用模型生成服务。</p>
+      </aside>
+    </section>
+
+    <section class="start-section" aria-labelledby="start-title">
+      <div class="section-heading"><p class="eyebrow">GET STARTED</p><h2 id="start-title">三步完成首次接入</h2></div>
+      <ol class="steps">
+        <li><span class="step-no">01</span><div><h3>读取公开目录</h3><p>在下方发起一次真实 HTTP 请求，取得模板编号与预览。</p></div></li>
+        <li><span class="step-no">02</span><div><h3>运行本地服务</h3><p>按快速开始启动接入环境，使用运行时生成的访问凭证。</p></div></li>
+        <li><span class="step-no">03</span><div><h3>使用独立客户端</h3><p>提交固定素材引用，查询任务并保存实际返回的记录。</p></div></li>
+      </ol>
+    </section>
+
+    <section id="catalog" class="catalog-section" aria-labelledby="catalog-title">
+      <div class="section-heading row-heading"><div><p class="eyebrow">PUBLIC CATALOG</p><h2 id="catalog-title">公开角色目录</h2><p class="section-subtitle">原创矢量图标与固定模板描述，用于接口接入验证。</p></div><button class="button primary" id="load-catalog" type="button">读取公开目录</button></div>
+      <p id="catalog-status" class="catalog-status" role="status" aria-live="polite">点击“读取公开目录”，查看此次 HTTP 请求与响应。</p>
+      <div id="catalog-cards" class="catalog-cards" aria-live="polite"></div>
+      <details class="request-details" id="catalog-response"><summary>本次目录请求记录</summary><pre id="catalog-log">尚未请求</pre></details>
+      <noscript><p>请启用 JavaScript 运行目录请求，或直接<a href="./catalog.json">查看目录 JSON</a>。</p></noscript>
+    </section>
+
+    <section id="api" class="api-section" aria-labelledby="api-title">
+      <div class="section-heading"><p class="eyebrow">API REFERENCE</p><h2 id="api-title">接口说明</h2><p class="section-subtitle">页面目录由 GitHub Pages 提供；下列任务接口在下载后的本机服务中运行。</p></div>
+      <div class="table-wrap"><table><caption class="sr-only">接入接口及运行环境</caption><thead><tr><th scope="col">方法</th><th scope="col">路径</th><th scope="col">用途</th><th scope="col">运行环境</th></tr></thead><tbody>
+        <tr><td><span class="method">GET</span></td><td><code>./catalog.json</code></td><td>读取公开目录</td><td>当前网页</td></tr>
+        <tr><td><span class="method">GET</span></td><td><code>/v1/health</code></td><td>查看服务状态</td><td>本机服务</td></tr>
+        <tr><td><span class="method">GET</span></td><td><code>/v1/templates</code></td><td>查询可用模板</td><td>本机服务</td></tr>
+        <tr><td><span class="method post">POST</span></td><td><code>/v1/tasks</code></td><td>创建固定参考任务</td><td>本机服务</td></tr>
+        <tr><td><span class="method">GET</span></td><td><code>/v1/tasks/{task_id}</code></td><td>查询任务状态</td><td>本机服务</td></tr>
+        <tr><td><span class="method">GET</span></td><td><code>/v1/results/{task_id}.svg</code></td><td>取得固定参考结果</td><td>本机服务</td></tr>
+      </tbody></table></div>
+      <div class="api-foot"><a href="./openapi.json">完整接口定义 ↗</a><p>任务接口使用 Bearer 凭证；实际地址和凭证由本地运行环境提供。</p></div>
+    </section>
+
+    <section class="example-section" aria-labelledby="example-title">
+      <div class="example-copy"><p class="eyebrow">CLIENT EXAMPLE</p><h2 id="example-title">一次提交，按编号查询。</h2><p>客户端提交模板编号与固定素材引用。相同幂等键用于识别重复提交，结果保留执行模式和请求编号。</p><div class="link-stack"><a href="./examples/run_client.py">独立 Python 客户端源码 ↗</a><a href="./quickstart.html">启动步骤与验证方法 ↗</a><a href="https://github.com/hkjtsgmc79-boop/yingxiang-mirror-downloads/actions/workflows/developer-integration.yml" target="_blank" rel="noopener noreferrer">GitHub 自动接入检查 ↗</a></div></div>
+      <div class="code-panel"><div class="code-heading"><span>创建任务请求结构</span><button id="copy-request" class="copy-button" type="button">复制示例</button></div><pre><code id="request-example">POST /v1/tasks
+Authorization: Bearer &lt;RUNTIME_TOKEN&gt;
+Idempotency-Key: example-client-001
+Content-Type: application/json
+
+{
+  "template_id": "opera-qingyi",
+  "input_asset_ref": "fixture:portrait-01"
+}</code></pre><p id="copy-status" class="copy-status" aria-live="polite">此处只有占位符，访问凭证不写入示例代码。</p></div>
+    </section>
+
+    <section class="resources" aria-labelledby="resources-title"><div><h2 id="resources-title">接入资料</h2><p>按同一接口定义开发、运行和记录，便于后续扩展到实际服务。</p></div><div class="resource-links"><a href="./terms.html"><span>开发者技术接入约定</span><span aria-hidden="true">↗</span></a><a href="./openapi.json"><span>OpenAPI 接口定义</span><span aria-hidden="true">↗</span></a><a href="https://github.com/hkjtsgmc79-boop/yingxiang-mirror-downloads/tree/main/developers" target="_blank" rel="noopener noreferrer"><span>源码与版本记录</span><span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer class="site-footer wrap"><p>映像魔镜 · 开发者接入资料</p><p>杭州市新青年歌舞团股份有限公司</p><a href="../">返回产品下载页</a></footer>
+</body>
+</html>

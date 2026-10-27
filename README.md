@@ -40,3 +40,9 @@
 模型API Key由工作人员在配套后端配置。请勿将API Key、设备配对码或个人照片提交到公开仓库或公开反馈中。
 
 项目主体：杭州市新青年歌舞团股份有限公司。
+
+## 开发者接入
+
+[打开开发者中心](https://hkjtsgmc79-boop.github.io/yingxiang-mirror-downloads/developers/) · [快速开始](./developers/quickstart.md) · [接入约定](./developers/terms.md)
+
+公开文档、模板目录和独立客户端代码已放在 `developers/`。接入服务使用固定参考响应，可在本地或 GitHub Actions 中运行；生产模型服务需另行部署并授权。接入验证不需要模型 API Key。

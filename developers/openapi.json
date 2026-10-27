@@ -1,0 +1,507 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "映像魔镜开发者接入接口",
+    "version": "0.1.0",
+    "description": "本地真实HTTP接入验证，固定参考输出。运行模式fixture_replay，不调用模型，不接收真实人像。GitHub Pages只承载公开文档和目录。",
+    "license": {
+      "name": "MIT（仅本目录新增接入代码、文档和原创SVG）",
+      "url": "https://github.com/hkjtsgmc79-boop/yingxiang-mirror-downloads/blob/main/developers/LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8791",
+      "description": "下载后启动的本机服务，非公网推理地址"
+    }
+  ],
+  "security": [
+    {
+      "RuntimeBearer": []
+    }
+  ],
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "服务状态",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "服务可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request_id": {
+                      "type": "string"
+                    },
+                    "execution_mode": {
+                      "type": "string",
+                      "enum": [
+                        "fixture_replay"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    },
+                    "api_version": {
+                      "type": "string"
+                    },
+                    "model_inference": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/templates": {
+      "get": {
+        "operationId": "listTemplates",
+        "summary": "读取模板目录",
+        "responses": {
+          "200": {
+            "description": "目录响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request_id": {
+                      "type": "string"
+                    },
+                    "execution_mode": {
+                      "type": "string",
+                      "enum": [
+                        "fixture_replay"
+                      ]
+                    },
+                    "templates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "template_id",
+                          "name"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "template_id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "preview_url": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "凭证缺失或无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tasks": {
+      "post": {
+        "operationId": "createTask",
+        "summary": "创建固定参考任务",
+        "description": "请求体上限4096字节。相同客户端、相同幂等键和请求复用原任务；改变内容返回409。每次进程最多128任务，退出时清除。只接受两个请求字段。",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,80}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "template_id",
+                  "input_asset_ref"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "template_id": {
+                    "type": "string",
+                    "enum": [
+                      "opera-qingyi",
+                      "opera-wusheng",
+                      "opera-hualian"
+                    ]
+                  },
+                  "input_asset_ref": {
+                    "type": "string",
+                    "enum": [
+                      "fixture:portrait-01"
+                    ]
+                  }
+                }
+              },
+              "example": {
+                "template_id": "opera-qingyi",
+                "input_asset_ref": "fixture:portrait-01"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "新任务创建",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "同一幂等请求复用已有任务",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "无效字段、素材引用、模板或幂等键",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "凭证缺失或无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "同键内容冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "411": {
+            "description": "缺少Content-Length",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "请求体超限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "只接受application/json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "本进程任务数量已达128",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tasks/{task_id}": {
+      "get": {
+        "operationId": "getTask",
+        "summary": "查询当前客户端的任务",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^tsk_[a-f0-9]{24}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "任务状态",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "凭证缺失或无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "任务不存在或不属于当前客户端",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/results/{task_id}.svg": {
+      "get": {
+        "operationId": "getResult",
+        "summary": "取得当前客户端的固定参考SVG",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^tsk_[a-f0-9]{24}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "明确注明固定参考模式的原创SVG，非AI生成图片",
+            "content": {
+              "image/svg+xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "凭证缺失或无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "任务不存在或不属于当前客户端",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "任务尚未完成",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "RuntimeBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "本地环境内存中的临时客户端令牌；不是模型Key，不写入公开代码或日志。"
+      }
+    },
+    "schemas": {
+      "Task": {
+        "type": "object",
+        "required": [
+          "request_id",
+          "execution_mode",
+          "task_id",
+          "client_id",
+          "template_id",
+          "status",
+          "output_asset_ref",
+          "model_inference"
+        ],
+        "properties": {
+          "request_id": {
+            "type": "string"
+          },
+          "execution_mode": {
+            "type": "string",
+            "enum": [
+              "fixture_replay"
+            ]
+          },
+          "task_id": {
+            "type": "string",
+            "pattern": "^tsk_[a-f0-9]{24}$"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "template_id": {
+            "type": "string",
+            "enum": [
+              "opera-qingyi",
+              "opera-wusheng",
+              "opera-hualian"
+            ]
+          },
+          "input_asset_ref": {
+            "type": "string",
+            "enum": [
+              "fixture:portrait-01"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "succeeded"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "output_asset_ref": {
+            "type": "string",
+            "nullable": true
+          },
+          "output_kind": {
+            "type": "string",
+            "enum": [
+              "fixed_reference_svg"
+            ]
+          },
+          "model_inference": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "request_id",
+          "execution_mode",
+          "error"
+        ],
+        "properties": {
+          "request_id": {
+            "type": "string"
+          },
+          "execution_mode": {
+            "type": "string",
+            "enum": [
+              "fixture_replay"
+            ]
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-public-catalog-url": "https://hkjtsgmc79-boop.github.io/yingxiang-mirror-downloads/developers/catalog.json"
+}
